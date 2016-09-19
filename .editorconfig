@@ -1,0 +1,22 @@
+# http://editorconfig.org
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+charset = utf-8
+end_of_line = lf
+
+[bdist_wheel]
+universal = 1
+
+[flake8]
+max-line-length = 120
+
+[isort]
+line_length = 120
+multi_line_output = 5
+not_skip = __init__.py
