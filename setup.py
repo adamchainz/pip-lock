@@ -7,22 +7,19 @@ import sys
 from setuptools import find_packages, setup
 
 
-def get_version(package):
+def get_version(module_file):
     """
     Return package version as listed in `__version__` in `__init__.py`.
     """
-    with open(os.path.join(package, '__init__.py'), 'r') as f:
+    with open(module_file, 'r') as f:
         init_py = f.read()
     return re.search("__version__ = ['\"]([^'\"]+)['\"]", init_py).group(1)
 
 
-version = get_version('pip_lock')
+version = get_version('pip_lock.py')
 
 
 if sys.argv[-1] == 'publish':
-    if os.system("pip freeze | grep wheel"):
-        print("wheel not installed.\nUse `pip install wheel`.\nExiting.")
-        sys.exit()
     if os.system("pip freeze | grep twine"):
         print("twine not installed.\nUse `pip install twine`.\nExiting.")
         sys.exit()
@@ -50,7 +47,7 @@ setup(
     author="YPlan",
     author_email='aaron@yplanapp.com',
     url='https://github.com/YPlan/pip-lock',
-    packages=find_packages(exclude=['tests', 'tests.*']),
+    py_modules=['pip_lock'],
     include_package_data=True,
     license="ISCL",
     zip_safe=False,
