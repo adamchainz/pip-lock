@@ -15,24 +15,25 @@ Install
 
 Install with **pip**:
 
-```
-pip install pip-lock
-```
+.. code-block:: python
+
+    pip install pip-lock
 
 Example usage
-----------
+-------------
 
-```python
-from pip_lock import check_requirements
+.. code-block:: python
 
-# Check requirements and exit with exit code 1 if there are mismatches
-check_requirements('requirements.txt')
-```
+    from pip_lock import check_requirements
 
-```python
-from pip_lock import get_mismatches
+    # Check requirements and exit with exit code 1 if there are mismatches
+    check_requirements('requirements.txt')
 
-# Get mistmatches as a dictionary of tuples (expected, actual)
-# e.g. {'django': ('1.10.2', None), 'requests': ('2.11.1', '2.9.2')}
-mismatches = get_mismatches('requirements.txt')
-```
+
+.. code-block:: python
+
+    from pip_lock import get_mismatches
+
+    # Get mistmatches as a dictionary of tuples (expected, actual)
+    # e.g. {'django': ('1.10.2', None), 'requests': ('2.11.1', '2.9.2')}
+    mismatches = get_mismatches('requirements.txt')

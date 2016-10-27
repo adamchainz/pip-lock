@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from pathlib import Path
-import sys
-from six import iteritems
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import os
+import sys
 
 from pip.operations.freeze import freeze as pip_freeze
 
@@ -46,7 +46,7 @@ def get_package_versions(lines):
 
 def get_mismatches(requirements_file):
     """Return a dictionary of requirement mismatches."""
-    requirements_path = str(Path(__file__).parent.resolve() / requirements_file)
+    requirements_path = os.path.join(os.path.dirname(__file__), requirements_file)
     pip_lines = read_pip(requirements_path)
 
     expected = get_package_versions(pip_lines)
@@ -81,7 +81,7 @@ def check_requirements(requirements_file, post_text=None):
     mismatches = get_mismatches(requirements_file)
     if mismatches:
         errors = []
-        for name, (expected, actual) in iteritems(mismatches):
+        for name, (expected, actual) in mismatches.items():
             if actual is None:
                 errors.append("Package {0} is in {1} but not in virtualenv".format(name, requirements_file))
                 continue

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import os
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from unittest.mock import patch
 
 import pytest
-from pip_lock import read_pip, get_package_versions, get_mismatches, print_errors, check_requirements
+from pip_lock import check_requirements, get_mismatches, get_package_versions, print_errors, read_pip
 
 
 def create_file(tmpdir, name, text):

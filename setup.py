@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import os
 import re
 import sys
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 
 def get_version(module_file):
@@ -51,9 +53,6 @@ setup(
     include_package_data=True,
     license="ISCL",
     zip_safe=False,
-    install_requires=[
-        'six>=1.5.0',
-    ],
     keywords='pip, requirements, YPlan',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
