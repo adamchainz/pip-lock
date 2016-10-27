@@ -5,6 +5,9 @@ pip-lock
 .. image:: https://img.shields.io/pypi/v/pip-lock.svg
         :target: https://pypi.python.org/pypi/pip-lock
 
+.. image:: https://img.shields.io/travis/YPlan/pip-lock/master.svg
+        :target: https://travis-ci.org/YPlan/pip-lock
+
 Check for differences between requirements.txt files and your environment.
 
 * Free software: ISC license
