@@ -10,8 +10,6 @@ pip-lock
 
 Check for differences between requirements.txt files and your environment.
 
-* Free software: ISC license
-
 
 Install
 -------
