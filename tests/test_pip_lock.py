@@ -62,6 +62,11 @@ class TestGetMismatches(object):
         )
 
     @patch('pip_lock.pip_freeze')
+    def test_relative_requirements_file(self, pip_freeze, tmpdir):
+        pip_freeze.return_value = ['package==1.1']
+        assert get_mismatches('test_requirements.txt') == {'package': ('1.2', '1.1')}
+
+    @patch('pip_lock.pip_freeze')
     def test_version_mismatch(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ['package==1.1']
         requirements_path = create_file(tmpdir, 'requirements.txt', 'package==1.2')
