@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import inspect
 import os
 import sys
 
@@ -46,7 +47,8 @@ def get_package_versions(lines):
 
 def get_mismatches(requirements_file):
     """Return a dictionary of requirement mismatches."""
-    requirements_path = os.path.join(os.path.dirname(__file__), requirements_file)
+    parent_frame_path = inspect.stack()[1][1]
+    requirements_path = os.path.join(os.path.dirname(parent_frame_path), requirements_file)
     pip_lines = read_pip(requirements_path)
 
     expected = get_package_versions(pip_lines)
