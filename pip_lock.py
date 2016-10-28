@@ -45,10 +45,17 @@ def get_package_versions(lines):
     return versions
 
 
+def get_calling_frame_path():
+    for frame in inspect.stack():
+        file_name = os.path.abspath(frame[1])
+        if file_name != __file__:
+            return os.path.dirname(file_name)
+    raise Exception('Cannot find the parent frame.')
+
+
 def get_mismatches(requirements_file):
     """Return a dictionary of requirement mismatches."""
-    parent_frame_path = inspect.stack()[1][1]
-    requirements_path = os.path.join(os.path.dirname(parent_frame_path), requirements_file)
+    requirements_path = os.path.abspath(os.path.join(get_calling_frame_path(), requirements_file))
     pip_lines = read_pip(requirements_path)
 
     expected = get_package_versions(pip_lines)

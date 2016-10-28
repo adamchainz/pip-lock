@@ -3,6 +3,7 @@ History
 =======
 
 * New notes here
+* Fix relative paths for all environments
 
 1.0.1 (2016-10-28)
 ------------------
