@@ -127,3 +127,8 @@ class TestCheckRequirements(object):
         _, err = capsys.readouterr()
         assert 'package1 has version 1.1 but you have version 1.0 installed' in err
         assert 'package2 is in requirements.txt but not in virtualenv' in err
+
+    @patch('pip_lock.pip_freeze')
+    def test_relative_requirements_file(self, pip_freeze):
+        pip_freeze.return_value = ['package==1.2']
+        check_requirements('test_requirements.txt')
