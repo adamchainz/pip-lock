@@ -1,8 +1,12 @@
-=======
+.. :changelog:
+
 History
 =======
 
-* New notes here
+Pending release
+---------------
+
+* New release notes go here
 
 1.0.2 (2016-10-28)
 ------------------
