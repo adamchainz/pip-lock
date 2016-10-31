@@ -106,7 +106,7 @@ def check_requirements(requirements_file, post_text=None):
 
         print_errors(
             errors,
-            "There are requirement mistmatches with {0}".format(requirements_file),
+            "There are requirement mismatches with {0}".format(requirements_file),
             post_text,
         )
         sys.exit(1)
