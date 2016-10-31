@@ -10,9 +10,13 @@ pip-lock
 
 Check for differences between requirements.txt files and your environment.
 
+At YPlan, we automatically call ``check_requirements()`` during development and testing to provide developers instant
+feedback if their environment is out of sync with the current requirements.txt. This ensures that developers do
+not expierence unexpected behaviour or errors related to out of sync requirements.
 
-Install
--------
+
+Installation
+============
 
 Install with **pip**:
 
@@ -21,7 +25,7 @@ Install with **pip**:
     pip install pip-lock
 
 Example usage
--------------
+=============
 
 .. code-block:: python
 
@@ -38,3 +42,58 @@ Example usage
     # Get mistmatches as a dictionary of tuples (expected, actual)
     # e.g. {'django': ('1.10.2', None), 'requests': ('2.11.1', '2.9.2')}
     mismatches = get_mismatches('requirements.txt')
+
+
+At YPlan, we call ``check_requirements()`` within our Django ``manage.py`` which checks the requirements every time
+Django auto reloads or tests are run. We recommend checking the environment to ensure it is not run in production.
+
+API
+===
+
+``check_requirements(requirements_file_path, post_text='')``
+------------------------------------------------------------
+
+Exit with exit code 1 and output to stderr if there are mismatches between the environment and requirements file.
+
+``requirements_file_path`` is the path to the requirements.txt file. We recommend using an absolute file path.
+
+``post_text`` is optional text which is displayed after the stderr message. This can be used to display instructions
+on how to update the requirements.
+
+Example:
+
+.. code-block:: python
+
+    check_requirements(
+        'requirements.txt',
+        post_text='\nRun the following on your host machine: \n\nYPLAN_REQS=1 vagrant provision\n'
+    )
+
+.. code-block:: bash
+
+    There are requirement mismatches with requirements.txt:
+            * Package Django has version 1.9.10 but you have version 1.9.0 installed.
+            * Package requests has version 2.11.1 but you have version 2.11.0 installed.
+            * Package requests-oauthlib is in requirements.txt but not in virtualenv
+
+    Run the following on your host machine:
+
+            YPLAN_REQS=1 vagrant provision
+
+``get_mismatches(requirements_file_path, post_text='')``
+--------------------------------------------------------
+
+Return a dictionary of tuples (expected_version, actual_version) for mismatched packages.
+
+``requirements_file_path`` is the path to the requirements.txt file. We recommend using an absolute file path.
+
+Example:
+
+.. code-block:: python
+
+    get_mismatches('requirements.txt')
+
+
+.. code-block:: python
+
+    {'django': ('1.10.2', '1.9.0'), 'requests': ('2.11.1', '2.9.2'), 'request-oauthlib': ('0.7.0', None)}
