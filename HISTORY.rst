@@ -3,6 +3,7 @@ History
 =======
 
 * New notes here
+* Fix error message typo
 
 1.0.2 (2016-10-28)
 ------------------
