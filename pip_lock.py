@@ -79,7 +79,7 @@ def print_errors(errors, pre_text=None, post_text=None):
     if pre_text:
         sys.stderr.write(pre_text + "\n")
     for message in errors:
-        sys.stderr.write("        * {0}\n".format(message))
+        sys.stderr.write("    * {0}\n".format(message))
     if post_text:
         sys.stderr.write(post_text)
     sys.stderr.write("\033[0m")
@@ -106,7 +106,7 @@ def check_requirements(requirements_file, post_text=None):
 
         print_errors(
             errors,
-            "There are requirement mistmatches with {0}".format(requirements_file),
+            "There are requirement mismatches with {0}".format(requirements_file),
             post_text,
         )
         sys.exit(1)
