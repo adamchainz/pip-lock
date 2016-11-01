@@ -7,6 +7,8 @@ Pending release
 ---------------
 
 * New release notes go here
+* Fix 'mismatches' typo
+* Only indent mismatch list by 4 spaces in error message
 
 1.0.2 (2016-10-28)
 ------------------

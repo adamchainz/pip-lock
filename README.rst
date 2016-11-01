@@ -45,7 +45,7 @@ Example usage
 
 
 At YPlan, we call ``check_requirements()`` within our Django ``manage.py`` which checks the requirements every time
-Django auto reloads or tests are run. We recommend checking the environment to ensure it is not run in production.
+Django starts or tests are run. We recommend checking the environment to ensure it is not run in production.
 
 API
 ===
@@ -66,19 +66,19 @@ Example:
 
     check_requirements(
         'requirements.txt',
-        post_text='\nRun the following on your host machine: \n\nYPLAN_REQS=1 vagrant provision\n'
+        post_text='\nRun the following on your host machine: \n\n    vagrant provision\n'
     )
 
 .. code-block:: bash
 
     There are requirement mismatches with requirements.txt:
-            * Package Django has version 1.9.10 but you have version 1.9.0 installed.
-            * Package requests has version 2.11.1 but you have version 2.11.0 installed.
-            * Package requests-oauthlib is in requirements.txt but not in virtualenv
+        * Package Django has version 1.9.10 but you have version 1.9.0 installed.
+        * Package requests has version 2.11.1 but you have version 2.11.0 installed.
+        * Package requests-oauthlib is in requirements.txt but not in virtualenv
 
     Run the following on your host machine:
 
-            YPLAN_REQS=1 vagrant provision
+        vagrant provision
 
 ``get_mismatches(requirements_file_path, post_text='')``
 --------------------------------------------------------
