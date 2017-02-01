@@ -39,7 +39,7 @@ Example usage
 
     from pip_lock import get_mismatches
 
-    # Get mistmatches as a dictionary of tuples (expected, actual)
+    # Get mismatches as a dictionary of tuples (expected, actual)
     # e.g. {'django': ('1.10.2', None), 'requests': ('2.11.1', '2.9.2')}
     mismatches = get_mismatches('requirements.txt')
 
