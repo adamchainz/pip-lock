@@ -1,10 +1,8 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os
+import codecs
 import re
-import sys
 
 from setuptools import setup
 
@@ -13,31 +11,18 @@ def get_version(module_file):
     """
     Return package version as listed in `__version__` in `__init__.py`.
     """
-    with open(module_file, 'r') as f:
-        init_py = f.read()
+    with codecs.open(module_file, 'r', 'utf-8') as fp:
+        init_py = fp.read()
     return re.search("__version__ = ['\"]([^'\"]+)['\"]", init_py).group(1)
 
 
 version = get_version('pip_lock.py')
 
 
-if sys.argv[-1] == 'publish':
-    if os.system("pip freeze | grep twine"):
-        print("twine not installed.\nUse `pip install twine`.\nExiting.")
-        sys.exit()
-    os.system("rm -rf .eggs/ build/ dist/")
-    os.system("python setup.py sdist bdist_wheel")
-    os.system("twine upload dist/*")
-    print("You probably want to also tag the version now:")
-    print("  git tag -a v%s -m 'Version %s'" % (version, version))
-    print("  git push --tags")
-    sys.exit()
-
-
-with open('README.rst') as readme_file:
+with codecs.open('README.rst', 'r', 'utf-8') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.rst') as history_file:
+with codecs.open('HISTORY.rst', 'r', 'utf-8') as history_file:
     history = history_file.read()
 
 
