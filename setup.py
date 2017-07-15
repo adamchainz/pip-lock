@@ -7,13 +7,10 @@ import re
 from setuptools import setup
 
 
-def get_version(module_file):
-    """
-    Return package version as listed in `__version__` in `__init__.py`.
-    """
-    with codecs.open(module_file, 'r', 'utf-8') as fp:
-        init_py = fp.read()
-    return re.search("__version__ = ['\"]([^'\"]+)['\"]", init_py).group(1)
+def get_version(filename):
+    with codecs.open(filename, 'r', 'utf-8') as fp:
+        contents = fp.read()
+    return re.search(r"__version__ = ['\"]([^'\"]+)['\"]", contents).group(1)
 
 
 version = get_version('pip_lock.py')
