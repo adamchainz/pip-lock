@@ -1,7 +1,8 @@
-notifications:
-    email: false
-
 sudo: false
+dist: trusty
+
+notifications:
+  email: false
 
 language: python
 python: 3.6
