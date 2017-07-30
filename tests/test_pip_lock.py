@@ -64,7 +64,9 @@ class TestGetMismatches(object):
     @patch('pip_lock.pip_freeze')
     def test_relative_requirements_file(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ['package==1.1']
-        assert get_mismatches('test_requirements.txt') == {'package': ('1.2', '1.1')}
+        create_file(tmpdir, 'requirements.txt', 'package==1.2')
+        with tmpdir.as_cwd():
+            assert get_mismatches('requirements.txt') == {'package': ('1.2', '1.1')}
 
     @patch('pip_lock.pip_freeze')
     def test_version_mismatch(self, pip_freeze, tmpdir):
@@ -129,6 +131,8 @@ class TestCheckRequirements(object):
         assert 'package2 is in requirements.txt but not in virtualenv' in err
 
     @patch('pip_lock.pip_freeze')
-    def test_relative_requirements_file(self, pip_freeze):
+    def test_relative_requirements_file(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ['package==1.2']
-        check_requirements('test_requirements.txt')
+        create_file(tmpdir, 'requirements.txt', 'package==1.2')
+        with tmpdir.as_cwd():
+            check_requirements('requirements.txt')

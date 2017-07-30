@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import inspect
 import os
 import sys
 
@@ -45,18 +44,9 @@ def get_package_versions(lines):
     return versions
 
 
-def get_calling_frame_path():
-    for frame in inspect.stack():
-        file_name = os.path.abspath(frame[1])
-        if file_name != __file__:
-            return os.path.dirname(file_name)
-    raise Exception('Cannot find the parent frame.')
-
-
-def get_mismatches(requirements_file):
+def get_mismatches(requirements_file_path):
     """Return a dictionary of requirement mismatches."""
-    requirements_path = os.path.abspath(os.path.join(get_calling_frame_path(), requirements_file))
-    pip_lines = read_pip(requirements_path)
+    pip_lines = read_pip(requirements_file_path)
 
     expected = get_package_versions(pip_lines)
     actual = get_package_versions(pip_freeze())
@@ -85,14 +75,14 @@ def print_errors(errors, pre_text=None, post_text=None):
     sys.stderr.write("\033[0m")
 
 
-def check_requirements(requirements_file, post_text=None):
+def check_requirements(requirements_file_path, post_text=None):
     """Print errors and exit program if there are mismatches with the requirements file."""
-    mismatches = get_mismatches(requirements_file)
+    mismatches = get_mismatches(requirements_file_path)
     if mismatches:
         errors = []
         for name, (expected, actual) in mismatches.items():
             if actual is None:
-                errors.append("Package {0} is in {1} but not in virtualenv".format(name, requirements_file))
+                errors.append("Package {0} is in {1} but not in virtualenv".format(name, requirements_file_path))
                 continue
 
             if expected != actual:
@@ -106,7 +96,7 @@ def check_requirements(requirements_file, post_text=None):
 
         print_errors(
             errors,
-            "There are requirement mismatches with {0}".format(requirements_file),
+            "There are requirement mismatches with {0}".format(requirements_file_path),
             post_text,
         )
         sys.exit(1)
