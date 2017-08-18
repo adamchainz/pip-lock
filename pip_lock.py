@@ -6,7 +6,7 @@ import sys
 
 from pip.operations.freeze import freeze as pip_freeze
 
-__version__ = '1.0.2'
+__version__ = '1.1.0'
 
 
 def lines_from_file(filename):
