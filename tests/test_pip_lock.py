@@ -4,6 +4,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from unittest.mock import patch
 
 import pytest
+
 from pip_lock import check_requirements, get_mismatches, get_package_versions, print_errors, read_pip
 
 
