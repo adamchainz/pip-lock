@@ -95,7 +95,7 @@ def check_requirements(requirements_file_path, post_text=None):
                         name,
                         expected,
                         actual,
-                    )
+                    ),
                 )
 
         print_errors(
