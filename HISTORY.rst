@@ -5,6 +5,9 @@ History
 
 .. New release notes go here
 
+1.1.1 (2018-04-15)
+------------------
+
 * Fix for pip 10 move of import to ``pip._internal``
 
 1.1.0 (2016-08-18)

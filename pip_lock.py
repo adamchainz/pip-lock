@@ -10,7 +10,7 @@ try:
 except ImportError:
     from pip.operations.freeze import freeze as pip_freeze
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 
 def lines_from_file(filename):
