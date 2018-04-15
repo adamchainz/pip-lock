@@ -4,13 +4,13 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 import sys
 
-# pip 10.0.0 made freezer internal. Try to use new name and fallback to old one.
 try:
+    # pip 10+
     from pip._internal.operations.freeze import freeze as pip_freeze
 except ImportError:
     from pip.operations.freeze import freeze as pip_freeze
 
-__version__ = '1.1.1'
+__version__ = '1.1.0'
 
 
 def lines_from_file(filename):

@@ -3,10 +3,9 @@
 History
 =======
 
-Pending release
----------------
+.. New release notes go here
 
-* New release notes go here
+* Fix for pip 10 move of import to ``pip._internal``
 
 1.1.0 (2016-08-18)
 ------------------
