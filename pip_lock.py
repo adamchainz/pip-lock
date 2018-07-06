@@ -42,6 +42,9 @@ def get_package_versions(lines):
         if line.startswith('https://'):
             continue
 
+        if line.startswith('-e'):
+            continue
+
         name, version_plus = line.split('==', 1)
         versions[name.lower()] = version_plus.split(' ', 1)[0]
 
