@@ -5,6 +5,8 @@ History
 
 .. New release notes go here
 
+* Ignore installed external (``-e``) packages.
+
 1.1.1 (2018-04-15)
 ------------------
 

@@ -30,7 +30,7 @@ def read_pip(filename):
     return lines
 
 
-def get_package_versions(lines):
+def get_package_versions(lines, ignore_external=False):
     """Return a dictionary of package versions."""
     versions = {}
     for line in lines:
@@ -42,7 +42,7 @@ def get_package_versions(lines):
         if line.startswith('https://'):
             continue
 
-        if line.startswith('-e'):
+        if ignore_external and line.startswith('-e'):
             continue
 
         name, version_plus = line.split('==', 1)
@@ -56,7 +56,7 @@ def get_mismatches(requirements_file_path):
     pip_lines = read_pip(requirements_file_path)
 
     expected = get_package_versions(pip_lines)
-    actual = get_package_versions(pip_freeze())
+    actual = get_package_versions(pip_freeze(), ignore_external=True)
 
     mismatches = {}
     for name, version in expected.items():
