@@ -107,7 +107,7 @@ class TestGetMismatches(object):
     @patch('pip_lock.pip_freeze')
     def test_editable_packages(self, pip_freeze, tmpdir):
         pip_freeze.return_value = [
-            '-e git+git@github.com:YPlan/pip-lock.git@efac0eef8072d73b001b1bae0731c1d58790ac4b#egg=pip-lock',
+            '-e git+git@github.com:adamchainz/pip-lock.git@efac0eef8072d73b001b1bae0731c1d58790ac4b#egg=pip-lock',
             'package==1.1',
         ]
         requirements_path = create_file(tmpdir, 'requirements.txt', 'package==1.1')
