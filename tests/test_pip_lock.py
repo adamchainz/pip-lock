@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from unittest.mock import patch
-
 import pytest
 
 from pip_lock import check_requirements, get_mismatches, get_package_versions, print_errors, read_pip
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 
 def create_file(tmpdir, name, text):
@@ -62,49 +65,49 @@ class TestGetMismatches(object):
             'package1==1.1\npackage2==1.2',
         )
 
-    @patch('pip_lock.pip_freeze')
+    @mock.patch('pip_lock.pip_freeze')
     def test_relative_requirements_file(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ['package==1.1']
         create_file(tmpdir, 'requirements.txt', 'package==1.2')
         with tmpdir.as_cwd():
             assert get_mismatches('requirements.txt') == {'package': ('1.2', '1.1')}
 
-    @patch('pip_lock.pip_freeze')
+    @mock.patch('pip_lock.pip_freeze')
     def test_version_mismatch(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ['package==1.1']
         requirements_path = create_file(tmpdir, 'requirements.txt', 'package==1.2')
 
         assert get_mismatches(requirements_path) == {'package': ('1.2', '1.1')}
 
-    @patch('pip_lock.pip_freeze')
+    @mock.patch('pip_lock.pip_freeze')
     def test_missing(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ['']
         requirements_path = create_file(tmpdir, 'requirements.txt', 'package==1.1')
 
         assert get_mismatches(requirements_path) == {'package': ('1.1', None)}
 
-    @patch('pip_lock.pip_freeze')
+    @mock.patch('pip_lock.pip_freeze')
     def test_no_mismatches(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ['package==1.1']
         requirements_path = create_file(tmpdir, 'requirements.txt', 'package==1.1')
 
         assert get_mismatches(requirements_path) == {}
 
-    @patch('pip_lock.pip_freeze')
+    @mock.patch('pip_lock.pip_freeze')
     def test_no_mismatches_case_insensitive(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ['Package==1.1']
         requirements_path = create_file(tmpdir, 'requirements.txt', 'package==1.1')
 
         assert get_mismatches(requirements_path) == {}
 
-    @patch('pip_lock.pip_freeze')
+    @mock.patch('pip_lock.pip_freeze')
     def test_empty(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ['']
         requirements_path = create_file(tmpdir, 'requirements.txt', '')
 
         assert get_mismatches(requirements_path) == {}
 
-    @patch('pip_lock.pip_freeze')
+    @mock.patch('pip_lock.pip_freeze')
     def test_editable_packages(self, pip_freeze, tmpdir):
         pip_freeze.return_value = [
             '-e git+git@github.com:adamchainz/pip-lock.git@efac0eef8072d73b001b1bae0731c1d58790ac4b#egg=pip-lock',
@@ -133,12 +136,12 @@ class TestPrintErrors(object):
 
 class TestCheckRequirements(object):
 
-    @patch('pip_lock.get_mismatches')
+    @mock.patch('pip_lock.get_mismatches')
     def test_no_mismatches(self, get_mismatches):
         get_mismatches.return_value = {}
         check_requirements('requirements.txt')
 
-    @patch('pip_lock.get_mismatches')
+    @mock.patch('pip_lock.get_mismatches')
     def test_mismatches(self, get_mismatches, capsys):
         get_mismatches.return_value = {'package1': ('1.1', '1.0'), 'package2': ('1.0', None)}
         with pytest.raises(SystemExit):
@@ -148,7 +151,7 @@ class TestCheckRequirements(object):
         assert 'package1 has version 1.1 but you have version 1.0 installed' in err
         assert 'package2 is in requirements.txt but not in virtualenv' in err
 
-    @patch('pip_lock.pip_freeze')
+    @mock.patch('pip_lock.pip_freeze')
     def test_relative_requirements_file(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ['package==1.2']
         create_file(tmpdir, 'requirements.txt', 'package==1.2')
