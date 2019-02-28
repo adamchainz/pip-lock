@@ -1,8 +1,8 @@
+from unittest import mock
+
 import pytest
 
 from pip_lock import check_requirements, get_mismatches, get_package_versions, print_errors, read_pip
-
-from unittest import mock
 
 
 def create_file(tmpdir, name, text):
