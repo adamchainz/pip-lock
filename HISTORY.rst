@@ -5,6 +5,8 @@ History
 
 .. New release notes go here
 
+* Drop Python 2 support, only Python 3.4+ is supported now.
+
 1.2.0 (2018-07-25)
 ------------------
 

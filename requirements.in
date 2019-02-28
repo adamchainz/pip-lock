@@ -1,10 +1,7 @@
 docutils
 flake8
 flake8-commas
-futures<3.2.0
 isort
-mock
-modernize
 multilint
 Pygments
 pytest
