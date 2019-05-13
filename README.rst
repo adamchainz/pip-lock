@@ -24,7 +24,7 @@ Install with **pip**:
 
     pip install pip-lock
 
-Python 3.4+ supported.
+Python 3.5-3.7 supported.
 
 Example usage
 =============
