@@ -8,6 +8,9 @@ pip-lock
 .. image:: https://img.shields.io/travis/adamchainz/pip-lock/master.svg
         :target: https://travis-ci.org/adamchainz/pip-lock
 
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/python/black
+
 Check for differences between requirements.txt files and your environment.
 
 At YPlan, we automatically call ``check_requirements()`` during development and testing to provide developers instant
