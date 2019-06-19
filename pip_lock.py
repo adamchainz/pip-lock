@@ -7,7 +7,7 @@ try:
 except ImportError:
     from pip.operations.freeze import freeze as pip_freeze
 
-__version__ = '2.0.0'
+__version__ = "2.0.0"
 
 
 def lines_from_file(filename):
@@ -19,9 +19,9 @@ def read_pip(filename):
     """Return lines in pip file, concatenating included requirement files."""
     lines = lines_from_file(filename)
     for line in lines:
-        if line.startswith('-r '):
+        if line.startswith("-r "):
             orig_dirpath = os.path.dirname(os.path.realpath(filename))
-            sub_filename = line.split(' ')[1]
+            sub_filename = line.split(" ")[1]
             sub_filepath = os.path.join(orig_dirpath, sub_filename)
             lines.extend(read_pip(sub_filepath))
     return lines
@@ -33,17 +33,17 @@ def get_package_versions(lines, ignore_external=False):
     for line in lines:
         line = line.strip()
 
-        if len(line) == 0 or line.startswith('#') or line.startswith('-r '):
+        if len(line) == 0 or line.startswith("#") or line.startswith("-r "):
             continue
 
-        if line.startswith('https://'):
+        if line.startswith("https://"):
             continue
 
-        if ignore_external and line.startswith('-e'):
+        if ignore_external and line.startswith("-e"):
             continue
 
-        name, version_plus = line.split('==', 1)
-        versions[name.lower()] = version_plus.split(' ', 1)[0]
+        name, version_plus = line.split("==", 1)
+        versions[name.lower()] = version_plus.split(" ", 1)[0]
 
     return versions
 
@@ -80,23 +80,28 @@ def print_errors(errors, pre_text=None, post_text=None):
 
 
 def check_requirements(requirements_file_path, post_text=None):
-    """Print errors and exit program if there are mismatches with the requirements file."""
+    """
+    Print errors and exit program if there are mismatches with the requirements
+    file.
+    """
     mismatches = get_mismatches(requirements_file_path)
     if mismatches:
         errors = []
         for name, (expected, actual) in mismatches.items():
             if actual is None:
-                errors.append("Package {0} is in {1} but not in virtualenv".format(name, requirements_file_path))
+                errors.append(
+                    "Package {0} is in {1} but not in virtualenv".format(
+                        name, requirements_file_path
+                    )
+                )
                 continue
 
             if expected != actual:
-                errors.append(
-                    "Package {0} has version {1} but you have version {2} installed.".format(
-                        name,
-                        expected,
-                        actual,
-                    ),
-                )
+                msg = (
+                    "Package {0} has version {1} but you have version {2} "
+                    + "installed."
+                ).format(name, expected, actual)
+                errors.append(msg)
 
         print_errors(
             errors,
