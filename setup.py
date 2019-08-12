@@ -30,6 +30,9 @@ setup(
     author="Aaron Kirkbride, Adam Johnson, et al.",
     author_email="me@adamj.eu",
     url="https://github.com/adamchainz/pip-lock",
+    project_urls={
+        "Changelog": "https://github.com/adamchainz/pip-lock/blob/master/HISTORY.rst"
+    },
     py_modules=["pip_lock"],
     include_package_data=True,
     python_requires=">=3.5",
