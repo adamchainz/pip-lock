@@ -7,8 +7,6 @@ try:
 except ImportError:
     from pip.operations.freeze import freeze as pip_freeze
 
-__version__ = "2.0.0"
-
 
 def lines_from_file(filename):
     with open(filename) as f:
