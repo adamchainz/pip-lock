@@ -9,4 +9,5 @@ multilint
 Pygments
 pytest
 pytest-randomly
+secretstorage # required for twine on linux
 twine
