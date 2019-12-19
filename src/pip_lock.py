@@ -1,11 +1,7 @@
 import os
 import sys
 
-try:
-    # pip 10+
-    from pip._internal.operations.freeze import freeze as pip_freeze
-except ImportError:
-    from pip.operations.freeze import freeze as pip_freeze
+from pip._internal.operations.freeze import freeze as pip_freeze
 
 
 def lines_from_file(filename):
