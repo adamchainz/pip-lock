@@ -5,6 +5,9 @@ History
 
 .. New release notes go here
 
+2.1.0 (2019-12-19)
+------------------
+
 * Update Python support to 3.5-3.8, as 3.4 has reached its end of life.
 * Converted setuptools metadata to configuration file. This meant removing the
   ``__version__`` attribute from the package. If you want to inspect the
