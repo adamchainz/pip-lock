@@ -17,7 +17,7 @@ def create_file(tmpdir, name, text):
     return str(t)
 
 
-class TestReadPip(object):
+class TestReadPip:
     def test_read(self, tmpdir):
         path = create_file(tmpdir, "requirements.txt", "package1==1.0\npackage2==1.1")
         assert read_pip(path) == ["package1==1.0", "package2==1.1"]
@@ -33,7 +33,7 @@ class TestReadPip(object):
         assert read_pip(path) == [""]
 
 
-class TestGetPackageVersion(object):
+class TestGetPackageVersion:
     def test_version(self):
         assert get_package_versions(["package1==1.0", "package2==1.1"]) == {
             "package1": "1.0",
@@ -53,7 +53,7 @@ class TestGetPackageVersion(object):
         assert get_package_versions(["https://www.google.com"]) == {}
 
 
-class TestGetMismatches(object):
+class TestGetMismatches:
     def setUp(self, tmpdir):
         super(TestGetMismatches, self).setUp()
         self.requirements_path = create_file(
@@ -115,8 +115,17 @@ class TestGetMismatches(object):
 
         assert get_mismatches(requirements_path) == {}
 
+    @mock.patch("pip_lock.pip_freeze")
+    def test_package_with_extra(self, pip_freeze, tmpdir):
+        pip_freeze.return_value = ["package==1.1"]
+        requirements_path = create_file(
+            tmpdir, "requirements.txt", "package[anextra]==1.1"
+        )
 
-class TestPrintErrors(object):
+        assert get_mismatches(requirements_path) == {}
+
+
+class TestPrintErrors:
     def test_errors(self, capsys):
         print_errors(["error message 1", "error message 2"])
         _, err = capsys.readouterr()
@@ -131,7 +140,7 @@ class TestPrintErrors(object):
         assert "post text" in err
 
 
-class TestCheckRequirements(object):
+class TestCheckRequirements:
     @mock.patch("pip_lock.get_mismatches")
     def test_no_mismatches(self, get_mismatches):
         get_mismatches.return_value = {}
