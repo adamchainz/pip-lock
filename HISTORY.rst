@@ -12,6 +12,7 @@ History
   ``importlib.metadata.version("pip-lock")``
   (`docs <https://docs.python.org/3.8/library/importlib.metadata.html#distribution-versions>`__ /
   `backport <https://pypi.org/project/importlib-metadata/>`__).
+* Fix parsing of package names featuring extras e.g. ``package[extra1,extra2]``.
 
 2.0.0 (2019-02-28)
 ------------------
