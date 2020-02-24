@@ -25,7 +25,7 @@ Install with **pip**:
 
 .. code-block:: python
 
-    pip install pip-lock
+    python -m pip install pip-lock
 
 Python 3.5 to 3.8 supported.
 
