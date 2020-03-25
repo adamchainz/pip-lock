@@ -70,7 +70,7 @@ def print_errors(errors, pre_text=None, post_text=None):
     if pre_text:
         sys.stderr.write(pre_text + "\n")
     for message in errors:
-        sys.stderr.write("    * {0}\n".format(message))
+        sys.stderr.write("    * {}\n".format(message))
     if post_text:
         sys.stderr.write(post_text)
     sys.stderr.write("\033[0m")
@@ -87,7 +87,7 @@ def check_requirements(requirements_file_path, post_text=None):
         for name, (expected, actual) in mismatches.items():
             if actual is None:
                 errors.append(
-                    "Package {0} is in {1} but not in virtualenv".format(
+                    "Package {} is in {} but not in virtualenv".format(
                         name, requirements_file_path
                     )
                 )
@@ -102,7 +102,7 @@ def check_requirements(requirements_file_path, post_text=None):
 
         print_errors(
             errors,
-            "There are requirement mismatches with {0}".format(requirements_file_path),
+            "There are requirement mismatches with {}".format(requirements_file_path),
             post_text,
         )
         sys.exit(1)
