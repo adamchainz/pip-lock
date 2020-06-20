@@ -6,7 +6,7 @@ pip-lock
    :target: https://github.com/adamchainz/pip-lock/actions?workflow=CI
 
 .. image:: https://img.shields.io/pypi/v/pip-lock.svg
-   :target: https://pypi.python.org/pypi/pip-lock
+   :target: https://pypi.org/project/pip-lock/
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/python/black
