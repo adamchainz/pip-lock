@@ -1,9 +1,6 @@
-.. :changelog:
-
+=======
 History
 =======
-
-.. New release notes go here
 
 2.1.0 (2019-12-19)
 ------------------
