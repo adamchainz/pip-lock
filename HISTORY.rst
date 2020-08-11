@@ -2,6 +2,9 @@
 History
 =======
 
+2.1.1 (2020-08-11)
+------------------
+
 * Fix to ignore packages installed directly from wheels, for example pip itself
   on Heroku, which will output its location in ``pip freeze`` as
   ``pip @ file:///tmp/pip-20.1.1-py2.py3-none-any.whl``.
