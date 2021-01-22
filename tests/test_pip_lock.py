@@ -49,6 +49,9 @@ class TestGetPackageVersion:
     def test_ignore_includes(self):
         assert get_package_versions(["-r example.txt"]) == {}
 
+    def test_ignore_arguments(self):
+        assert get_package_versions(["--find-links file:./wheels"]) == {}
+
     def test_ignore_urls(self):
         assert get_package_versions(["https://www.google.com"]) == {}
 
