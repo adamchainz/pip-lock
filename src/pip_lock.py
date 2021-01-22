@@ -27,7 +27,7 @@ def get_package_versions(lines, ignore_external_and_at=False):
     for line in lines:
         line = line.strip()
 
-        if len(line) == 0 or line.startswith("#") or line.startswith("-r "):
+        if len(line) == 0 or line.startswith(("#", "-")):
             continue
 
         if line.startswith("https://"):
