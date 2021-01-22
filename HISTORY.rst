@@ -2,6 +2,9 @@
 History
 =======
 
+2.2.1 (2021-01-22)
+------------------
+
 * Fix to ignore lines that represent arguments to pip, such as
   ``--find-links``.
 
