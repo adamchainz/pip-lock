@@ -15,12 +15,7 @@ pip-lock
    :target: https://github.com/pre-commit/pre-commit
    :alt: pre-commit
 
-Check for differences between requirements.txt files and your environment.
-
-At YPlan, we automatically call ``check_requirements()`` during development and testing to provide developers instant
-feedback if their environment is out of sync with the current requirements.txt. This ensures that developers do
-not experience unexpected behaviour or errors related to out of sync requirements.
-
+Check for differences between requirements.txt files and the current environment.
 
 Installation
 ============
@@ -43,26 +38,52 @@ Check out my book `Speed Up Your Django Tests <https://gumroad.com/l/suydt>`__ w
 Example usage
 =============
 
+Call ``pip_lock.check_requirements()`` at your application startup to verify that the current virtual environment matches your requirements file.
+This gives instant feedback to developers changing branches etc. who would otherwise experience unexpected behaviour or errors due to out of sync requirements.
+
+In a Django project, it makes sense to add the check inside the ``manage.py`` file, which is the project’s main entrypoint.
+You can add a call to ``pip_lock.check_requirements()`` after the first import of Django.
+For example:
+
 .. code-block:: python
 
-    from pip_lock import check_requirements
-
-    # Check requirements and if there are any mismatches, print a message and die with exit code 1
-    check_requirements('requirements.txt')
-
-
-.. code-block:: python
-
-    from pip_lock import get_mismatches
-
-    # Get mismatches as a dictionary of package names to tuples (expected_version, actual_version)
-    # e.g. {'django': ('1.10.2', None), 'requests': ('2.11.1', '2.9.2')}
-    mismatches = get_mismatches('requirements.txt')
+    #!/usr/bin/env python
+    import os
+    import sys
+    from pathlib import Path
 
 
-At YPlan, we call ``check_requirements()`` within our Django ``manage.py`` which checks the requirements every time
-Django starts or tests are run. We recommend checking the environment to ensure it is not run in a production
-environment, to avoid slowing down application startup.
+    def main():
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "example.settings")
+
+        try:
+            from django.core.management import execute_from_command_line
+        except ImportError as exc:
+            raise ImportError(
+                "Couldn't import Django. Are you sure it's installed and "
+                "available on your PYTHONPATH environment variable? Did you "
+                "forget to activate a virtual environment?"
+            ) from exc
+
+        try:
+            import pip_lock
+        except ImportError:
+            raise ImportError(
+                "Couldn't import pip-lock. Are you on the right virtualenv and up "
+                + "to date?"
+            )
+
+        requirements_path = str(Path(__file__).parent / "requirements.txt")
+        pip_lock.check_requirements(
+            requirements_path,
+            post_text="\nRun the following:\n\npython -m pip install -r requirements.txt\n",
+        )
+
+        execute_from_command_line(sys.argv)
+
+
+    if __name__ == "__main__":
+        main()
 
 API
 ===
