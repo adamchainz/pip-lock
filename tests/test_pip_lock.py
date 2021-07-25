@@ -40,6 +40,11 @@ class TestGetPackageVersion:
             "package2": "1.1",
         }
 
+    def test_normalize_dashes(self):
+        assert get_package_versions(["package_1==1.0"]) == {
+            "package-1": "1.0",
+        }
+
     def test_ignore_empty(self):
         assert get_package_versions([""]) == {}
 
