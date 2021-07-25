@@ -39,7 +39,7 @@ def get_package_versions(lines, ignore_external_and_at=False):
 
         full_name, version_and_extras = line.split("==", 1)
         # Strip extras
-        name = full_name.split("[", 1)[0].lower()
+        name = full_name.split("[", 1)[0].lower().replace("_", "-")
         version = version_and_extras.split(" ", 1)[0]
         versions[name] = version
 
