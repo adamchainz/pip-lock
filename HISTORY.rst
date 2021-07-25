@@ -2,6 +2,9 @@
 History
 =======
 
+2.3.0 (2021-07-25)
+------------------
+
 * Normalize package names from underscores to hyphens, just like pip does.
 
 * Stop distributing tests to reduce package size. Tests are not intended to be
