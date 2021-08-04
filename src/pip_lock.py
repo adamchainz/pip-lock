@@ -71,7 +71,7 @@ def print_errors(errors, pre_text=None, post_text=None):
     if pre_text:
         sys.stderr.write(pre_text + "\n")
     for message in errors:
-        sys.stderr.write("    * {}\n".format(message))
+        sys.stderr.write(f"    * {message}\n")
     if post_text:
         sys.stderr.write(post_text)
     sys.stderr.write("\033[0m")
@@ -103,7 +103,7 @@ def check_requirements(requirements_file_path, post_text=None):
 
         print_errors(
             errors,
-            "There are requirement mismatches with {}".format(requirements_file_path),
+            f"There are requirement mismatches with {requirements_file_path}",
             post_text,
         )
         sys.exit(1)

@@ -24,9 +24,9 @@ class TestReadPip:
 
     def test_include(self, tmpdir):
         inc_path = create_file(tmpdir, "requirements_inc.txt", "other-package==1.0")
-        path = create_file(tmpdir, "requirements.txt", "-r {}".format(inc_path))
+        path = create_file(tmpdir, "requirements.txt", f"-r {inc_path}")
 
-        assert read_pip(path) == ["-r {}".format(inc_path), "other-package==1.0"]
+        assert read_pip(path) == [f"-r {inc_path}", "other-package==1.0"]
 
     def test_empty(self, tmpdir):
         path = create_file(tmpdir, "requirements.txt", "")
