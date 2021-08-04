@@ -20,11 +20,7 @@ Check for differences between requirements.txt files and the current environment
 Installation
 ============
 
-Install with **pip**:
-
-.. code-block:: python
-
-    python -m pip install pip-lock
+Install with ``python -m pip install pip-lock``.
 
 Python 3.6 to 3.9 supported.
 
@@ -103,8 +99,8 @@ Example:
 .. code-block:: python
 
     check_requirements(
-        'requirements.txt',
-        post_text='\nRun the following on your host machine: \n\n    vagrant provision\n'
+        "requirements.txt",
+        post_text="\nRun the following on your host machine: \n\n    vagrant provision\n",
     )
 
 .. code-block:: bash
@@ -127,7 +123,7 @@ Return a dictionary of package names to tuples of ``(expected_version, actual_ve
 
 Example:
 
-.. code-block:: python
+.. code-block:: pycon
 
-    >>> get_mismatches('requirements.txt')
+    >>> get_mismatches("requirements.txt")
     {'django': ('1.10.2', '1.9.0'), 'requests': ('2.11.1', '2.9.2'), 'request-oauthlib': ('0.7.0', None)}
