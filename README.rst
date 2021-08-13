@@ -84,8 +84,8 @@ For example:
 API
 ===
 
-``check_requirements(requirements_file_path, post_text='')``
-------------------------------------------------------------
+``check_requirements(requirements_file_path: str, post_text: str='') -> None``
+------------------------------------------------------------------------------
 
 Exit with exit code 1 and output to stderr if there are mismatches between the environment and requirements file.
 
@@ -114,8 +114,8 @@ Example:
 
         vagrant provision
 
-``get_mismatches(requirements_file_path)``
-------------------------------------------
+``get_mismatches(requirements_file_path: str) -> dict[str, tuple[str, str | None]]``
+-----------------------------------------------------------------------------
 
 Return a dictionary of package names to tuples of ``(expected_version, actual_version)`` for mismatched packages.
 

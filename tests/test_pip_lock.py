@@ -62,12 +62,6 @@ class TestGetPackageVersion:
 
 
 class TestGetMismatches:
-    def setUp(self, tmpdir):
-        super().setUp()
-        self.requirements_path = create_file(
-            tmpdir, "requirements.txt", "package1==1.1\npackage2==1.2"
-        )
-
     @mock.patch("pip_lock.pip_freeze")
     def test_relative_requirements_file(self, pip_freeze, tmpdir):
         pip_freeze.return_value = ["package==1.1"]
