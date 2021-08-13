@@ -115,7 +115,7 @@ Example:
         vagrant provision
 
 ``get_mismatches(requirements_file_path: str) -> dict[str, tuple[str, str | None]]``
------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
 
 Return a dictionary of package names to tuples of ``(expected_version, actual_version)`` for mismatched packages.
 
