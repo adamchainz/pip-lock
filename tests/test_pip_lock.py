@@ -124,6 +124,10 @@ class TestGetInstalled:
 
         assert result == {"package-one": "1.0.0"}
 
+    def test_ignore_git_urls(self):
+        url = "git+https://git@github.com/adamchainz/pip-lock.git@80361b8#egg=pip-lock"
+        assert get_package_versions([url]) == {}
+
 
 class TestGetMismatches:
     def test_relative_requirements_file(self, tmpdir):

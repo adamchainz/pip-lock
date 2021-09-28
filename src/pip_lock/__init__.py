@@ -36,7 +36,7 @@ def parse_pip(lines: Iterable[str]) -> dict[str, str]:
         if len(line) == 0 or line.startswith(("#", "-")):
             continue
 
-        if line.startswith("https://"):
+        if line.startswith("https://") or line.startswith("git+"):
             continue
 
         if " @ " in line:
