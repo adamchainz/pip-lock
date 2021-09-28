@@ -60,6 +60,10 @@ class TestGetPackageVersion:
     def test_ignore_urls(self):
         assert get_package_versions(["https://www.google.com"]) == {}
 
+    def test_ignore_git_urls(self):
+        url = "git+https://git@github.com/adamchainz/pip-lock.git@80361b8#egg=pip-lock"
+        assert get_package_versions([url]) == {}
+
 
 class TestGetMismatches:
     @mock.patch("pip_lock.pip_freeze")

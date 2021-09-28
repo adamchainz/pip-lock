@@ -33,7 +33,7 @@ def get_package_versions(
         if len(line) == 0 or line.startswith(("#", "-")):
             continue
 
-        if line.startswith("https://"):
+        if line.startswith("https://") or line.startswith("git+"):
             continue
 
         if ignore_external_and_at:
