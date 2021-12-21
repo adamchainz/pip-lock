@@ -1,3 +1,6 @@
+import sys
+from contextlib import contextmanager
+from typing import Dict, Generator
 from unittest import mock
 
 import pytest
@@ -10,11 +13,31 @@ from pip_lock import (
     read_pip,
 )
 
+if sys.version_info >= (3, 8):
+    from importlib.metadata import PackageNotFoundError
+else:
+    from importlib_metadata import PackageNotFoundError
+
 
 def create_file(tmpdir, name, text):
     t = tmpdir.join(name)
     t.write(text)
     return str(t)
+
+
+@contextmanager
+def mock_get_version(versions: Dict[str, str]) -> Generator[None, None, None]:
+    # importlib.metadata.version is case insensitive, so duplicate that here
+    versions = {name.lower(): version for name, version in versions.items()}
+
+    def fake_get_version(name: str) -> str:
+        try:
+            return versions[name.lower()]
+        except KeyError:
+            raise PackageNotFoundError from None
+
+    with mock.patch("pip_lock.get_version", fake_get_version):
+        yield
 
 
 class TestReadPip:
@@ -62,79 +85,63 @@ class TestGetPackageVersion:
 
 
 class TestGetMismatches:
-    @mock.patch("pip_lock.pip_freeze")
-    def test_relative_requirements_file(self, pip_freeze, tmpdir):
-        pip_freeze.return_value = ["package==1.1"]
+    def test_relative_requirements_file(self, tmpdir):
         create_file(tmpdir, "requirements.txt", "package==1.2")
-        with tmpdir.as_cwd():
-            assert get_mismatches("requirements.txt") == {"package": ("1.2", "1.1")}
 
-    @mock.patch("pip_lock.pip_freeze")
-    def test_version_mismatch(self, pip_freeze, tmpdir):
-        pip_freeze.return_value = ["package==1.1"]
+        with tmpdir.as_cwd(), mock_get_version({"package": "1.1"}):
+            result = get_mismatches("requirements.txt")
+
+        assert result == {"package": ("1.2", "1.1")}
+
+    def test_version_mismatch(self, tmpdir):
         requirements_path = create_file(tmpdir, "requirements.txt", "package==1.2")
 
-        assert get_mismatches(requirements_path) == {"package": ("1.2", "1.1")}
+        with tmpdir.as_cwd(), mock_get_version({"package": "1.1"}):
+            result = get_mismatches(requirements_path)
 
-    @mock.patch("pip_lock.pip_freeze")
-    def test_missing(self, pip_freeze, tmpdir):
-        pip_freeze.return_value = [""]
+        assert result == {"package": ("1.2", "1.1")}
+
+    def test_missing(self, tmpdir):
         requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
 
-        assert get_mismatches(requirements_path) == {"package": ("1.1", None)}
+        with mock_get_version({}):
+            result = get_mismatches(requirements_path)
 
-    @mock.patch("pip_lock.pip_freeze")
-    def test_no_mismatches(self, pip_freeze, tmpdir):
-        pip_freeze.return_value = ["package==1.1"]
+        assert result == {"package": ("1.1", None)}
+
+    def test_no_mismatches(self, tmpdir):
         requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
 
-        assert get_mismatches(requirements_path) == {}
+        with mock_get_version({"package": "1.1"}):
+            result = get_mismatches(requirements_path)
 
-    @mock.patch("pip_lock.pip_freeze")
-    def test_no_mismatches_case_insensitive(self, pip_freeze, tmpdir):
-        pip_freeze.return_value = ["Package==1.1"]
+        assert result == {}
+
+    def test_no_mismatches_case_insensitive(self, tmpdir):
         requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
 
-        assert get_mismatches(requirements_path) == {}
+        with mock_get_version({"Package": "1.1"}):
+            result = get_mismatches(requirements_path)
 
-    @mock.patch("pip_lock.pip_freeze")
-    def test_empty(self, pip_freeze, tmpdir):
-        pip_freeze.return_value = [""]
+        assert result == {}
+
+    def test_empty(self, tmpdir):
         requirements_path = create_file(tmpdir, "requirements.txt", "")
 
-        assert get_mismatches(requirements_path) == {}
+        with mock_get_version({}):
+            result = get_mismatches(requirements_path)
 
-    @mock.patch("pip_lock.pip_freeze")
-    def test_editable_packages_ignored(self, pip_freeze, tmpdir):
-        pip_freeze.return_value = [
-            (
-                "-e git+git@github.com:adamchainz/pip-lock.git@"
-                + "efac0eef8072d73b001b1bae0731c1d58790ac4b#egg=pip-lock"
-            ),
-            "package==1.1",
-        ]
-        requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
+        assert result == {}
 
-        assert get_mismatches(requirements_path) == {}
-
-    @mock.patch("pip_lock.pip_freeze")
-    def test_at_packages_ignored(self, pip_freeze, tmpdir):
-        pip_freeze.return_value = [
-            "pip @ file:///tmp/pip-20.1.1-py2.py3-none-any.whl",
-            "package==1.1",
-        ]
-        requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
-
-        assert get_mismatches(requirements_path) == {}
-
-    @mock.patch("pip_lock.pip_freeze")
-    def test_package_with_extra(self, pip_freeze, tmpdir):
-        pip_freeze.return_value = ["package==1.1"]
+    def test_package_with_extra(self, tmpdir):
         requirements_path = create_file(
             tmpdir, "requirements.txt", "package[anextra]==1.1"
         )
 
-        assert get_mismatches(requirements_path) == {}
+        with mock_get_version({"package": "1.1"}):
+            result = get_mismatches(requirements_path)
+
+        assert result == {}
 
 
 class TestPrintErrors:
@@ -171,9 +178,7 @@ class TestCheckRequirements:
         assert "package1 has version 1.1 but you have version 1.0 installed" in err
         assert "package2 is in requirements.txt but not in virtualenv" in err
 
-    @mock.patch("pip_lock.pip_freeze")
-    def test_relative_requirements_file(self, pip_freeze, tmpdir):
-        pip_freeze.return_value = ["package==1.2"]
+    def test_relative_requirements_file(self, tmpdir):
         create_file(tmpdir, "requirements.txt", "package==1.2")
-        with tmpdir.as_cwd():
+        with tmpdir.as_cwd(), mock_get_version({"package": "1.2"}):
             check_requirements("requirements.txt")
