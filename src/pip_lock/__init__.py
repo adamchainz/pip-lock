@@ -2,7 +2,12 @@ import os
 import sys
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from pip._internal.operations.freeze import freeze as pip_freeze
+if sys.version_info >= (3, 8):
+    from importlib.metadata import PackageNotFoundError
+    from importlib.metadata import version as get_version
+else:
+    from importlib_metadata import PackageNotFoundError
+    from importlib_metadata import version as get_version
 
 
 def lines_from_file(filename: str) -> List[str]:
@@ -22,9 +27,7 @@ def read_pip(filename: str) -> List[str]:
     return lines
 
 
-def get_package_versions(
-    lines: Iterable[str], ignore_external_and_at: bool = False
-) -> Dict[str, str]:
+def get_package_versions(lines: Iterable[str]) -> Dict[str, str]:
     """Return a dictionary of package versions."""
     versions = {}
     for line in lines:
@@ -35,10 +38,6 @@ def get_package_versions(
 
         if line.startswith("https://"):
             continue
-
-        if ignore_external_and_at:
-            if line.startswith("-e") or " @ " in line:
-                continue
 
         full_name, version_and_extras = line.split("==", 1)
         # Strip extras
@@ -54,16 +53,16 @@ def get_mismatches(requirements_file_path: str) -> Dict[str, Tuple[str, Optional
     pip_lines = read_pip(requirements_file_path)
 
     expected = get_package_versions(pip_lines)
-    actual = get_package_versions(pip_freeze(), ignore_external_and_at=True)
 
     mismatches: Dict[str, Tuple[str, Optional[str]]] = {}
     for name, version in expected.items():
-        if name not in actual:
+        try:
+            actual_version = get_version(name)
+        except PackageNotFoundError:
             mismatches[name] = (version, None)
-            continue
-
-        if version != actual[name]:
-            mismatches[name] = (version, actual[name])
+        else:
+            if version != actual_version:
+                mismatches[name] = (version, actual_version)
 
     return mismatches
 
