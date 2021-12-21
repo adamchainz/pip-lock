@@ -2,6 +2,9 @@
 History
 =======
 
+2.6.0 (2021-12-21)
+------------------
+
 * Make the package much faster by using ``importlib.metadata`` to get installed
   versions, rather than ``pip freeze``. This saves most of the import time
   (local benchmark: 200ms down to 10ms) and halves the run time (230ms to
