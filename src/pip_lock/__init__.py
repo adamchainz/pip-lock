@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import sys
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Iterable
 
 if sys.version_info >= (3, 8):
     from importlib.metadata import PackageNotFoundError
@@ -10,12 +12,12 @@ else:
     from importlib_metadata import version as get_version
 
 
-def lines_from_file(filename: str) -> List[str]:
+def lines_from_file(filename: str) -> list[str]:
     with open(filename) as f:
         return f.read().split("\n")
 
 
-def read_pip(filename: str) -> List[str]:
+def read_pip(filename: str) -> list[str]:
     """Return lines in pip file, concatenating included requirement files."""
     lines = lines_from_file(filename)
     for line in lines:
@@ -27,7 +29,7 @@ def read_pip(filename: str) -> List[str]:
     return lines
 
 
-def get_package_versions(lines: Iterable[str]) -> Dict[str, str]:
+def get_package_versions(lines: Iterable[str]) -> dict[str, str]:
     """Return a dictionary of package versions."""
     versions = {}
     for line in lines:
@@ -48,13 +50,13 @@ def get_package_versions(lines: Iterable[str]) -> Dict[str, str]:
     return versions
 
 
-def get_mismatches(requirements_file_path: str) -> Dict[str, Tuple[str, Optional[str]]]:
+def get_mismatches(requirements_file_path: str) -> dict[str, tuple[str, str | None]]:
     """Return a dictionary of requirement mismatches."""
     pip_lines = read_pip(requirements_file_path)
 
     expected = get_package_versions(pip_lines)
 
-    mismatches: Dict[str, Tuple[str, Optional[str]]] = {}
+    mismatches: dict[str, tuple[str, str | None]] = {}
     for name, version in expected.items():
         try:
             actual_version = get_version(name)
@@ -68,9 +70,9 @@ def get_mismatches(requirements_file_path: str) -> Dict[str, Tuple[str, Optional
 
 
 def print_errors(
-    errors: List[str],
-    pre_text: Optional[str] = None,
-    post_text: Optional[str] = None,
+    errors: list[str],
+    pre_text: str | None = None,
+    post_text: str | None = None,
 ) -> None:
     """Print list of errors to stderr with optional pre_text and post_text."""
     sys.stderr.write("\033[91m")  # red text

@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import sys
 from contextlib import contextmanager
-from typing import Dict, Generator
+from typing import Generator
 from unittest import mock
 
 import pytest
@@ -26,7 +28,7 @@ def create_file(tmpdir, name, text):
 
 
 @contextmanager
-def mock_get_version(versions: Dict[str, str]) -> Generator[None, None, None]:
+def mock_get_version(versions: dict[str, str]) -> Generator[None, None, None]:
     # importlib.metadata.version is case insensitive, so duplicate that here
     versions = {name.lower(): version for name, version in versions.items()}
 
