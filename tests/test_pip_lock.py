@@ -18,12 +18,6 @@ from pip_lock import (
 )
 
 
-def create_file(tmpdir, name, text):
-    t = tmpdir.join(name)
-    t.write(text)
-    return str(t)
-
-
 @contextmanager
 def mock_get_distributions(versions: dict[str, str]) -> Generator[None, None, None]:
     def fake_get_distributions():
@@ -39,19 +33,26 @@ def mock_get_distributions(versions: dict[str, str]) -> Generator[None, None, No
 
 
 class TestReadPip:
-    def test_read(self, tmpdir):
-        path = create_file(tmpdir, "requirements.txt", "package1==1.0\npackage2==1.1")
-        assert read_pip(path) == ["package1==1.0", "package2==1.1"]
+    def test_read(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package1==1.0\npackage2==1.1\n")
+        assert read_pip(str(requirements)) == ["package1==1.0", "package2==1.1"]
 
-    def test_include(self, tmpdir):
-        inc_path = create_file(tmpdir, "requirements_inc.txt", "other-package==1.0")
-        path = create_file(tmpdir, "requirements.txt", f"-r {inc_path}")
+    def test_include(self, tmp_path):
+        requirements_inc = tmp_path / "requirements_inc.txt"
+        requirements_inc.write_text("other-package==1.0\n")
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text(f"-r {requirements_inc}\n")
 
-        assert read_pip(path) == [f"-r {inc_path}", "other-package==1.0"]
+        assert read_pip(str(requirements)) == [
+            f"-r {requirements_inc}",
+            "other-package==1.0",
+        ]
 
-    def test_empty(self, tmpdir):
-        path = create_file(tmpdir, "requirements.txt", "")
-        assert read_pip(path) == [""]
+    def test_empty(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("\n")
+        assert read_pip(str(requirements)) == [""]
 
 
 class TestParsePip:
@@ -137,61 +138,68 @@ class TestGetInstalled:
 
 
 class TestGetMismatches:
-    def test_relative_requirements_file(self, tmpdir):
-        create_file(tmpdir, "requirements.txt", "package==1.2")
+    def test_relative_requirements_file(self, monkeypatch, tmp_path):
+        monkeypatch.chdir(tmp_path)
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==1.2\n")
 
-        with tmpdir.as_cwd(), mock_get_distributions({"package": "1.1"}):
+        with mock_get_distributions({"package": "1.1"}):
             result = get_mismatches("requirements.txt")
 
         assert result == {"package": ("1.2", "1.1")}
 
-    def test_version_mismatch(self, tmpdir):
-        requirements_path = create_file(tmpdir, "requirements.txt", "package==1.2")
+    def test_version_mismatch(self, monkeypatch, tmp_path):
+        monkeypatch.chdir(tmp_path)
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==1.2\n")
 
-        with tmpdir.as_cwd(), mock_get_distributions({"package": "1.1"}):
-            result = get_mismatches(requirements_path)
+        with mock_get_distributions({"package": "1.1"}):
+            result = get_mismatches("requirements.txt")
 
         assert result == {"package": ("1.2", "1.1")}
 
-    def test_missing(self, tmpdir):
-        requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
+    def test_missing(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==1.1\n")
 
         with mock_get_distributions({}):
-            result = get_mismatches(requirements_path)
+            result = get_mismatches(str(requirements))
 
         assert result == {"package": ("1.1", None)}
 
-    def test_no_mismatches(self, tmpdir):
-        requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
+    def test_no_mismatches(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==1.1\n")
 
         with mock_get_distributions({"package": "1.1"}):
-            result = get_mismatches(requirements_path)
+            result = get_mismatches(str(requirements))
 
         assert result == {}
 
-    def test_no_mismatches_case_insensitive(self, tmpdir):
-        requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
+    def test_no_mismatches_case_insensitive(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==1.1\n")
 
         with mock_get_distributions({"Package": "1.1"}):
-            result = get_mismatches(requirements_path)
+            result = get_mismatches(str(requirements))
 
         assert result == {}
 
-    def test_empty(self, tmpdir):
-        requirements_path = create_file(tmpdir, "requirements.txt", "")
+    def test_empty(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("\n")
 
         with mock_get_distributions({}):
-            result = get_mismatches(requirements_path)
+            result = get_mismatches(str(requirements))
 
         assert result == {}
 
-    def test_package_with_extra(self, tmpdir):
-        requirements_path = create_file(
-            tmpdir, "requirements.txt", "package[anextra]==1.1"
-        )
+    def test_package_with_extra(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package[anextra]==1.1\n")
 
         with mock_get_distributions({"package": "1.1"}):
-            result = get_mismatches(requirements_path)
+            result = get_mismatches(str(requirements))
 
         assert result == {}
 
@@ -230,7 +238,9 @@ class TestCheckRequirements:
         assert "package1 has version 1.1 but you have version 1.0 installed" in err
         assert "package2 is in requirements.txt but not in virtualenv" in err
 
-    def test_relative_requirements_file(self, tmpdir):
-        create_file(tmpdir, "requirements.txt", "package==1.2")
-        with tmpdir.as_cwd(), mock_get_distributions({"package": "1.2"}):
+    def test_relative_requirements_file(self, monkeypatch, tmp_path):
+        monkeypatch.chdir(tmp_path)
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==1.2\n")
+        with mock_get_distributions({"package": "1.2"}):
             check_requirements("requirements.txt")
