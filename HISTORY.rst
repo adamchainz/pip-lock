@@ -2,6 +2,8 @@
 History
 =======
 
+* Restore behaviour of ignoring requirements declared with `Pip VCS support <https://pip.pypa.io/en/stable/topics/vcs-support/>`__.
+
 2.7.0 (2022-01-10)
 ------------------
 
