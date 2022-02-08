@@ -2,6 +2,9 @@
 History
 =======
 
+2.8.0 (2022-02-08)
+------------------
+
 * Restore behaviour of ignoring requirements declared with `Pip VCS support <https://pip.pypa.io/en/stable/topics/vcs-support/>`__, and extend it to new and old syntax.
 
 * Read all installed packages with ``importlib.metadata``, rather than trying to look up by name.
