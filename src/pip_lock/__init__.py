@@ -5,11 +5,9 @@ import sys
 from typing import Iterable
 
 if sys.version_info >= (3, 8):
-    from importlib.metadata import PackageNotFoundError
-    from importlib.metadata import version as get_version
+    from importlib.metadata import distributions as get_distributions
 else:
-    from importlib_metadata import PackageNotFoundError
-    from importlib_metadata import version as get_version
+    from importlib_metadata import distributions as get_distributions
 
 
 def lines_from_file(filename: str) -> list[str]:
@@ -29,7 +27,7 @@ def read_pip(filename: str) -> list[str]:
     return lines
 
 
-def get_package_versions(lines: Iterable[str]) -> dict[str, str]:
+def parse_pip(lines: Iterable[str]) -> dict[str, str]:
     """Return a dictionary of package versions."""
     versions = {}
     for line in lines:
@@ -45,29 +43,35 @@ def get_package_versions(lines: Iterable[str]) -> dict[str, str]:
             continue
 
         full_name, version_and_extras = line.split("==", 1)
-        # Strip extras
-        name = full_name.split("[", 1)[0].lower().replace("_", "-")
+        # Strip extras and normalize
+        name = normalize_name(full_name.split("[", 1)[0])
         version = version_and_extras.split(" ", 1)[0]
         versions[name] = version
 
     return versions
 
 
+def get_installed() -> dict[str, str]:
+    return {normalize_name(d.metadata["Name"]): d.version for d in get_distributions()}
+
+
+def normalize_name(name: str) -> str:
+    return name.lower().replace("_", "-").replace(".", "-")
+
+
 def get_mismatches(requirements_file_path: str) -> dict[str, tuple[str, str | None]]:
     """Return a dictionary of requirement mismatches."""
     pip_lines = read_pip(requirements_file_path)
-
-    expected = get_package_versions(pip_lines)
+    expected = parse_pip(pip_lines)
+    installed = get_installed()
 
     mismatches: dict[str, tuple[str, str | None]] = {}
-    for name, version in expected.items():
-        try:
-            actual_version = get_version(name)
-        except PackageNotFoundError:
-            mismatches[name] = (version, None)
-        else:
-            if version != actual_version:
-                mismatches[name] = (version, actual_version)
+    for name, expected_version in expected.items():
+        installed_version = installed.get(name)
+        if installed_version is None:
+            mismatches[name] = (expected_version, None)
+        elif installed_version != expected_version:
+            mismatches[name] = (expected_version, installed_version)
 
     return mismatches
 
