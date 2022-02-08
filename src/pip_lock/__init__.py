@@ -11,14 +11,10 @@ else:
     from importlib_metadata import distributions as get_distributions
 
 
-def lines_from_file(filename: str) -> list[str]:
-    with open(filename) as f:
-        return f.read().split("\n")
-
-
 def read_pip(filename: str) -> list[str]:
     """Return lines in pip file, concatenating included requirement files."""
-    lines = lines_from_file(filename)
+    with open(filename) as f:
+        lines = [line.strip() for line in f.readlines()]
     for line in lines:
         if line.startswith("-r "):
             orig_dirpath = os.path.dirname(os.path.realpath(filename))
