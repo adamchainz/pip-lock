@@ -85,6 +85,9 @@ class TestGetPackageVersion:
     def test_ignore_urls(self):
         assert get_package_versions(["https://www.google.com"]) == {}
 
+    def test_ignore_at_urls(self):
+        assert get_package_versions(["foo @ git+ssh://example.com"]) == {}
+
 
 class TestGetMismatches:
     def test_relative_requirements_file(self, tmpdir):

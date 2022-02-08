@@ -41,6 +41,9 @@ def get_package_versions(lines: Iterable[str]) -> dict[str, str]:
         if line.startswith("https://"):
             continue
 
+        if " @ " in line:
+            continue
+
         full_name, version_and_extras = line.split("==", 1)
         # Strip extras
         name = full_name.split("[", 1)[0].lower().replace("_", "-")
