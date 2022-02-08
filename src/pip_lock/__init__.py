@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import sys
 from typing import Iterable
 
@@ -27,6 +28,9 @@ def read_pip(filename: str) -> list[str]:
     return lines
 
 
+VCS_RE = re.compile(r"(|[^ ]+ @ )(bzr|git|hg|svn)\+\w+://")
+
+
 def parse_pip(lines: Iterable[str]) -> dict[str, str]:
     """Return a dictionary of package versions."""
     versions = {}
@@ -36,10 +40,10 @@ def parse_pip(lines: Iterable[str]) -> dict[str, str]:
         if len(line) == 0 or line.startswith(("#", "-")):
             continue
 
-        if line.startswith("https://"):
+        if line.startswith(("http://", "https://")):
             continue
 
-        if " @ " in line:
+        if VCS_RE.match(line):
             continue
 
         full_name, version_and_extras = line.split("==", 1)
