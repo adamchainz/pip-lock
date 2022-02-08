@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import sys
 from contextlib import contextmanager
+from email.message import EmailMessage
+from types import SimpleNamespace
 from typing import Generator
 from unittest import mock
 
@@ -9,16 +10,12 @@ import pytest
 
 from pip_lock import (
     check_requirements,
+    get_installed,
     get_mismatches,
-    get_package_versions,
+    parse_pip,
     print_errors,
     read_pip,
 )
-
-if sys.version_info >= (3, 8):
-    from importlib.metadata import PackageNotFoundError
-else:
-    from importlib_metadata import PackageNotFoundError
 
 
 def create_file(tmpdir, name, text):
@@ -28,17 +25,16 @@ def create_file(tmpdir, name, text):
 
 
 @contextmanager
-def mock_get_version(versions: dict[str, str]) -> Generator[None, None, None]:
-    # importlib.metadata.version is case insensitive, so duplicate that here
-    versions = {name.lower(): version for name, version in versions.items()}
+def mock_get_distributions(versions: dict[str, str]) -> Generator[None, None, None]:
+    def fake_get_distributions():
+        dists = []
+        for name, version in versions.items():
+            metadata = EmailMessage()
+            metadata["Name"] = name
+            dists.append(SimpleNamespace(metadata=metadata, version=version))
+        return iter(dists)
 
-    def fake_get_version(name: str) -> str:
-        try:
-            return versions[name.lower()]
-        except KeyError:
-            raise PackageNotFoundError from None
-
-    with mock.patch("pip_lock.get_version", fake_get_version):
+    with mock.patch("pip_lock.get_distributions", fake_get_distributions):
         yield
 
 
@@ -58,42 +54,82 @@ class TestReadPip:
         assert read_pip(path) == [""]
 
 
-class TestGetPackageVersion:
+class TestParsePip:
     def test_version(self):
-        assert get_package_versions(["package1==1.0", "package2==1.1"]) == {
+        assert parse_pip(["package1==1.0", "package2==1.1"]) == {
             "package1": "1.0",
             "package2": "1.1",
         }
 
     def test_normalize_dashes(self):
-        assert get_package_versions(["package_1==1.0"]) == {
-            "package-1": "1.0",
+        assert parse_pip(["package_one==1.0"]) == {
+            "package-one": "1.0",
+        }
+
+    def test_normalize_dots(self):
+        assert parse_pip(["foo.bar==1.0"]) == {
+            "foo-bar": "1.0",
         }
 
     def test_ignore_empty(self):
-        assert get_package_versions([""]) == {}
+        assert parse_pip([""]) == {}
 
     def test_ignore_comments(self):
-        assert get_package_versions(["# Comment"]) == {}
+        assert parse_pip(["# Comment"]) == {}
 
     def test_ignore_includes(self):
-        assert get_package_versions(["-r example.txt"]) == {}
+        assert parse_pip(["-r example.txt"]) == {}
 
     def test_ignore_arguments(self):
-        assert get_package_versions(["--find-links file:./wheels"]) == {}
+        assert parse_pip(["--find-links file:./wheels"]) == {}
 
     def test_ignore_urls(self):
-        assert get_package_versions(["https://www.google.com"]) == {}
+        assert parse_pip(["https://www.google.com"]) == {}
 
     def test_ignore_at_urls(self):
-        assert get_package_versions(["foo @ git+ssh://example.com"]) == {}
+        assert parse_pip(["foo @ git+ssh://example.com"]) == {}
+
+
+class TestGetInstalled:
+    def test_single(self):
+        with mock_get_distributions({"package": "1.0.0"}):
+            result = get_installed()
+
+        assert result == {"package": "1.0.0"}
+
+    def test_several(self):
+        versions = {"package-one": "1.0.0", "package-two": "2.0.0"}
+        with mock_get_distributions(versions):
+            result = get_installed()
+
+        assert result == {"package-one": "1.0.0", "package-two": "2.0.0"}
+
+    def test_normalize_case(self):
+        # importlib.metadata should already lowercase names, but we do so to
+        # be sure
+        with mock_get_distributions({"Package": "1.0.0"}):
+            result = get_installed()
+
+        assert result == {"package": "1.0.0"}
+
+    def test_normalize_underscore(self):
+        with mock_get_distributions({"package_one": "1.0.0"}):
+            result = get_installed()
+
+        assert result == {"package-one": "1.0.0"}
+
+    def test_normalize_dots(self):
+        with mock_get_distributions({"package.one": "1.0.0"}):
+            result = get_installed()
+
+        assert result == {"package-one": "1.0.0"}
 
 
 class TestGetMismatches:
     def test_relative_requirements_file(self, tmpdir):
         create_file(tmpdir, "requirements.txt", "package==1.2")
 
-        with tmpdir.as_cwd(), mock_get_version({"package": "1.1"}):
+        with tmpdir.as_cwd(), mock_get_distributions({"package": "1.1"}):
             result = get_mismatches("requirements.txt")
 
         assert result == {"package": ("1.2", "1.1")}
@@ -101,7 +137,7 @@ class TestGetMismatches:
     def test_version_mismatch(self, tmpdir):
         requirements_path = create_file(tmpdir, "requirements.txt", "package==1.2")
 
-        with tmpdir.as_cwd(), mock_get_version({"package": "1.1"}):
+        with tmpdir.as_cwd(), mock_get_distributions({"package": "1.1"}):
             result = get_mismatches(requirements_path)
 
         assert result == {"package": ("1.2", "1.1")}
@@ -109,7 +145,7 @@ class TestGetMismatches:
     def test_missing(self, tmpdir):
         requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
 
-        with mock_get_version({}):
+        with mock_get_distributions({}):
             result = get_mismatches(requirements_path)
 
         assert result == {"package": ("1.1", None)}
@@ -117,7 +153,7 @@ class TestGetMismatches:
     def test_no_mismatches(self, tmpdir):
         requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
 
-        with mock_get_version({"package": "1.1"}):
+        with mock_get_distributions({"package": "1.1"}):
             result = get_mismatches(requirements_path)
 
         assert result == {}
@@ -125,7 +161,7 @@ class TestGetMismatches:
     def test_no_mismatches_case_insensitive(self, tmpdir):
         requirements_path = create_file(tmpdir, "requirements.txt", "package==1.1")
 
-        with mock_get_version({"Package": "1.1"}):
+        with mock_get_distributions({"Package": "1.1"}):
             result = get_mismatches(requirements_path)
 
         assert result == {}
@@ -133,7 +169,7 @@ class TestGetMismatches:
     def test_empty(self, tmpdir):
         requirements_path = create_file(tmpdir, "requirements.txt", "")
 
-        with mock_get_version({}):
+        with mock_get_distributions({}):
             result = get_mismatches(requirements_path)
 
         assert result == {}
@@ -143,7 +179,7 @@ class TestGetMismatches:
             tmpdir, "requirements.txt", "package[anextra]==1.1"
         )
 
-        with mock_get_version({"package": "1.1"}):
+        with mock_get_distributions({"package": "1.1"}):
             result = get_mismatches(requirements_path)
 
         assert result == {}
@@ -185,5 +221,5 @@ class TestCheckRequirements:
 
     def test_relative_requirements_file(self, tmpdir):
         create_file(tmpdir, "requirements.txt", "package==1.2")
-        with tmpdir.as_cwd(), mock_get_version({"package": "1.2"}):
+        with tmpdir.as_cwd(), mock_get_distributions({"package": "1.2"}):
             check_requirements("requirements.txt")

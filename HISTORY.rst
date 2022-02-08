@@ -4,6 +4,9 @@ History
 
 * Restore behaviour of ignoring requirements declared with `Pip VCS support <https://pip.pypa.io/en/stable/topics/vcs-support/>`__.
 
+* Read all installed packages with ``importlib.metadata``, rather than trying to look up by name.
+  This allows pip-lock to work for packages that have a dot in their name, which ``pip-compile`` normalizes to a dash.
+
 2.7.0 (2022-01-10)
 ------------------
 
