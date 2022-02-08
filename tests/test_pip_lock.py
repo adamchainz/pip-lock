@@ -83,10 +83,21 @@ class TestParsePip:
     def test_ignore_arguments(self):
         assert parse_pip(["--find-links file:./wheels"]) == {}
 
-    def test_ignore_urls(self):
+    def test_ignore_http_urls(self):
+        assert parse_pip(["http://www.google.com"]) == {}
+
+    def test_ignore_https_urls(self):
         assert parse_pip(["https://www.google.com"]) == {}
 
-    def test_ignore_at_urls(self):
+    def test_ignore_bzr_http_urls(self):
+        url = "bzr+http://bzr.example.com"
+        assert parse_pip([url]) == {}
+
+    def test_ignore_git_https_urls(self):
+        url = "git+https://git@github.com/adamchainz/pip-lock.git@80361b8#egg=pip-lock"
+        assert parse_pip([url]) == {}
+
+    def test_ignore_at_git_ssh_urls(self):
         assert parse_pip(["foo @ git+ssh://example.com"]) == {}
 
 
@@ -123,10 +134,6 @@ class TestGetInstalled:
             result = get_installed()
 
         assert result == {"package-one": "1.0.0"}
-
-    def test_ignore_git_urls(self):
-        url = "git+https://git@github.com/adamchainz/pip-lock.git@80361b8#egg=pip-lock"
-        assert get_package_versions([url]) == {}
 
 
 class TestGetMismatches:
