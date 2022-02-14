@@ -101,6 +101,9 @@ class TestParsePip:
     def test_ignore_at_git_ssh_urls(self):
         assert parse_pip(["foo @ git+ssh://example.com"]) == {}
 
+    def test_ignore_at_https_urls(self):
+        assert parse_pip(["foo @ https://example.com"]) == {}
+
 
 class TestGetInstalled:
     def test_single(self):

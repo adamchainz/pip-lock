@@ -24,7 +24,7 @@ def read_pip(filename: str) -> list[str]:
     return lines
 
 
-VCS_RE = re.compile(r"(|[^ ]+ @ )(bzr|git|hg|svn)\+\w+://")
+VCS_RE = re.compile(r"(|[^ ]+ @ )[\w+]+://")
 
 
 def parse_pip(lines: Iterable[str]) -> dict[str, str]:
