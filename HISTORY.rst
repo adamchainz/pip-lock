@@ -2,6 +2,9 @@
 History
 =======
 
+2.8.1 (2022-02-14)
+------------------
+
 * Ignore all ``<name> @ <url>`` lines, rather than just for VCS URL’s.
 
 2.8.0 (2022-02-08)
