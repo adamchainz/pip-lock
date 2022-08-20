@@ -84,7 +84,7 @@ For example:
 API
 ===
 
-``check_requirements(requirements_file_path: str, post_text: str='') -> None``
+``check_requirements(requirements_file_path: str, post_text: str='', ignore_requirements: list[str]=None) -> None``
 ------------------------------------------------------------------------------
 
 Exit with exit code 1 and output to stderr if there are mismatches between the environment and requirements file.
@@ -93,6 +93,9 @@ Exit with exit code 1 and output to stderr if there are mismatches between the e
 
 ``post_text`` is optional text which is displayed after the stderr message. This can be used to display instructions
 on how to update the requirements.
+
+``ignore_requirements`` is optional list of requirement names to be ignored when checking requirements. Can be useful
+to ignore requirements that are omitted due to python version check (e.g. ``my-backport ; python_version < "3.9"``)
 
 Example:
 

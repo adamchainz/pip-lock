@@ -241,6 +241,19 @@ class TestCheckRequirements:
         assert "package1 has version 1.1 but you have version 1.0 installed" in err
         assert "package2 is in requirements.txt but not in virtualenv" in err
 
+    @mock.patch("pip_lock.get_mismatches")
+    def test_mismatches_with_ignored_requirements(self, get_mismatches, capsys):
+        get_mismatches.return_value = {
+            "package1": ("1.1", "1.0"),
+            "package2": ("1.0", None),
+        }
+        with pytest.raises(SystemExit):
+            check_requirements("requirements.txt", ignore_requirements=['package2'])
+
+        _, err = capsys.readouterr()
+        assert "package1 has version 1.1 but you have version 1.0 installed" in err
+        assert "package2 is in requirements.txt but not in virtualenv" not in err
+
     def test_relative_requirements_file(self, monkeypatch, tmp_path):
         monkeypatch.chdir(tmp_path)
         requirements = tmp_path / "requirements.txt"

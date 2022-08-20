@@ -92,15 +92,22 @@ def print_errors(
     sys.stderr.write("\033[0m")
 
 
-def check_requirements(requirements_file_path: str, post_text: str = "") -> None:
+def check_requirements(
+        requirements_file_path: str,
+        post_text: str = "",
+        ignore_requirements: list[str] = None,
+) -> None:
     """
     Print errors and exit program if there are mismatches with the requirements
     file.
     """
+    ignore_requirements = ignore_requirements or []
     mismatches = get_mismatches(requirements_file_path)
     if mismatches:
         errors = []
         for name, (expected, actual) in mismatches.items():
+            if name in ignore_requirements:
+                continue
             if actual is None:
                 errors.append(
                     "Package {} is in {} but not in virtualenv".format(
