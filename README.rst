@@ -84,7 +84,7 @@ For example:
 API
 ===
 
-``check_requirements(requirements_file_path: str, post_text: str='', ignore_requirements: list[str]=None) -> None``
+``check_requirements(requirements_file_path: str, post_text: str='', ignore_requirements: Union[list[str], None]=None) -> None``
 ------------------------------------------------------------------------------
 
 Exit with exit code 1 and output to stderr if there are mismatches between the environment and requirements file.

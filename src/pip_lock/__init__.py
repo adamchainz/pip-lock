@@ -95,7 +95,7 @@ def print_errors(
 def check_requirements(
     requirements_file_path: str,
     post_text: str = "",
-    ignore_requirements: list[str] = None,
+    ignore_requirements: list[str] | None = None,
 ) -> None:
     """
     Print errors and exit program if there are mismatches with the requirements
