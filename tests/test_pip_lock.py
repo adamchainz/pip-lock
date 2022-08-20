@@ -248,7 +248,7 @@ class TestCheckRequirements:
             "package2": ("1.0", None),
         }
         with pytest.raises(SystemExit):
-            check_requirements("requirements.txt", ignore_requirements=['package2'])
+            check_requirements("requirements.txt", ignore_requirements=["package2"])
 
         _, err = capsys.readouterr()
         assert "package1 has version 1.1 but you have version 1.0 installed" in err
