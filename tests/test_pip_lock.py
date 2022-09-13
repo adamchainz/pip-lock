@@ -104,6 +104,9 @@ class TestParsePip:
     def test_ignore_at_https_urls(self):
         assert parse_pip(["foo @ https://example.com"]) == {}
 
+    def test_ignore_no_version(self):
+        assert parse_pip(["black[jupyter]"]) == {}
+
 
 class TestGetInstalled:
     def test_single(self):
