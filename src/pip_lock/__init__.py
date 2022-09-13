@@ -42,6 +42,10 @@ def parse_pip(lines: Iterable[str]) -> dict[str, str]:
         if VCS_RE.match(line):
             continue
 
+        if "==" not in line:
+            # Handle no version specified
+            continue
+
         full_name, version_and_extras = line.split("==", 1)
         # Strip extras and normalize
         name = normalize_name(full_name.split("[", 1)[0])
