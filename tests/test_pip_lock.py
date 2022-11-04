@@ -8,14 +8,12 @@ from unittest import mock
 
 import pytest
 
-from pip_lock import (
-    check_requirements,
-    get_installed,
-    get_mismatches,
-    parse_pip,
-    print_errors,
-    read_pip,
-)
+from pip_lock import check_requirements
+from pip_lock import get_installed
+from pip_lock import get_mismatches
+from pip_lock import parse_pip
+from pip_lock import print_errors
+from pip_lock import read_pip
 
 
 @contextmanager
