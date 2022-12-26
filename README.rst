@@ -2,7 +2,7 @@
 pip-lock
 ========
 
-.. image:: https://img.shields.io/github/workflow/status/adamchainz/pip-lock/CI/main?style=for-the-badge
+.. image:: https://img.shields.io/github/actions/workflow/status/adamchainz/pip-lock/main.yml?branch=main&style=for-the-badge
    :target: https://github.com/adamchainz/pip-lock/actions?workflow=CI
 
 .. image:: https://img.shields.io/pypi/v/pip-lock.svg?style=for-the-badge
