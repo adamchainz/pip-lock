@@ -22,7 +22,7 @@ Installation
 
 Install with ``python -m pip install pip-lock``.
 
-Python 3.7 to 3.11 supported.
+Python 3.7 to 3.12 supported.
 
 ----
 
