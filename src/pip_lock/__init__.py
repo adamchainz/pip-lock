@@ -3,12 +3,8 @@ from __future__ import annotations
 import os
 import re
 import sys
+from importlib.metadata import distributions as get_distributions
 from typing import Iterable
-
-if sys.version_info >= (3, 8):
-    from importlib.metadata import distributions as get_distributions
-else:
-    from importlib_metadata import distributions as get_distributions
 
 
 def read_pip(filename: str) -> list[str]:
