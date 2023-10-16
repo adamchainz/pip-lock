@@ -17,19 +17,19 @@ pip-lock
 
 Check for differences between requirements.txt files and the current environment.
 
-Installation
-============
-
-Install with ``python -m pip install pip-lock``.
-
-Python 3.8 to 3.12 supported.
-
 ----
 
 **Working on a Django project?**
 Check out my book `Boost Your Django DX <https://adamchainz.gumroad.com/l/byddx>`__ which covers many ways to improve your development experience.
 
 ----
+
+Installation
+============
+
+Install with ``python -m pip install pip-lock``.
+
+Python 3.8 to 3.12 supported.
 
 Example usage
 =============
