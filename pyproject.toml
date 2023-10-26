@@ -4,6 +4,38 @@ requires = [
   "setuptools",
 ]
 
+[project]
+name = "pip-lock"
+version = "2.11.0"
+description = "Check for differences between requirements.txt files and your environment."
+readme = {file = "README.rst", content-type = "text/x-rst"}
+keywords = [
+  "pip",
+  "requirements",
+]
+license = {text = "MIT"}
+authors = [{name = "Aaron Kirkbride", email = "me@adamj.eu"}, {name = "Adam Johnson"}, {name = "et al."}]
+requires-python = ">=3.8"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Utilities",
+  "Typing :: Typed",
+]
+dependencies = [
+  'importlib-metadata; python_version < "3.8"',
+]
+urls = {Changelog = "https://github.com/adamchainz/pip-lock/blob/main/CHANGELOG.rst",Funding = "https://adamj.eu/books/",Repository = "https://github.com/adamchainz/pip-lock"}
+
 [tool.black]
 target-version = ['py38']
 
