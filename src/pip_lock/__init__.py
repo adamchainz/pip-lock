@@ -16,7 +16,7 @@ def read_pip(filename: str) -> list[str]:
             orig_dirpath = os.path.dirname(os.path.realpath(filename))
             sub_filename = line.split(" ")[1]
             sub_filepath = os.path.join(orig_dirpath, sub_filename)
-            lines.extend(read_pip(sub_filepath))
+            lines.extend(read_pip(sub_filepath))  # noqa: B038
     return lines
 
 
