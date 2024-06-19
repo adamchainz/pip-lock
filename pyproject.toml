@@ -8,12 +8,11 @@ requires = [
 name = "pip-lock"
 version = "2.11.0"
 description = "Check for differences between requirements.txt files and your environment."
-readme = { file = "README.rst", content-type = "text/x-rst" }
+readme = "README.rst"
 keywords = [
   "pip",
   "requirements",
 ]
-license = { text = "MIT" }
 authors = [
   { name = "Aaron Kirkbride", email = "me@adamj.eu" },
   { name = "Adam Johnson" },
