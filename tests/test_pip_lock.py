@@ -17,7 +17,7 @@ from pip_lock import read_pip
 
 
 @contextmanager
-def mock_get_distributions(versions: dict[str, str]) -> Generator[None, None, None]:
+def mock_get_distributions(versions: dict[str, str]) -> Generator[None]:
     def fake_get_distributions():
         dists = []
         for name, version in versions.items():
