@@ -51,6 +51,7 @@ addopts = """\
     --strict-config
     --strict-markers
     """
+xfail_strict = true
 
 [tool.mypy]
 enable_error_code = [
