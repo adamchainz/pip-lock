@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Generator
 from contextlib import contextmanager
 from email.message import EmailMessage
 from types import SimpleNamespace
-from typing import Generator
 from unittest import mock
 
 import pytest

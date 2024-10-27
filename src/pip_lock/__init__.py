@@ -3,8 +3,8 @@ from __future__ import annotations
 import os
 import re
 import sys
+from collections.abc import Iterable
 from importlib.metadata import distributions as get_distributions
-from typing import Iterable
 
 
 def read_pip(filename: str) -> list[str]:
