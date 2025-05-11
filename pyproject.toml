@@ -1,7 +1,7 @@
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = [
-  "setuptools",
+  "setuptools>=77",
 ]
 
 [project]
@@ -13,6 +13,8 @@ keywords = [
   "pip",
   "requirements",
 ]
+license = "MIT"
+license-files = [ "LICENSE" ]
 authors = [
   { name = "Aaron Kirkbride", email = "me@adamj.eu" },
   { name = "Adam Johnson" },
@@ -22,7 +24,6 @@ requires-python = ">=3.9"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
