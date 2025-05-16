@@ -124,7 +124,7 @@ Changelog
   calling code's file. It's now the standard behaviour of relative to the
   current working directory. Passing an absolute path is recommended.
 * Make comparison of package names case-insensitive to work with
-  ``requirements.txt`` files that use a different case to the canoncial package
+  ``requirements.txt`` files that use a different case to the canonical package
   name. This can happen with ``pip-compile`` that always outputs lowercase
   names.
 * Fix 'mismatches' typo
