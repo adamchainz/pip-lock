@@ -16,7 +16,7 @@ def read_pip(filename: str) -> list[str]:
             orig_dirpath = os.path.dirname(os.path.realpath(filename))
             sub_filename = line.split(" ")[1]
             sub_filepath = os.path.join(orig_dirpath, sub_filename)
-            lines.extend(read_pip(sub_filepath))  # noqa: B038
+            lines.extend(read_pip(sub_filepath))
     return lines
 
 
@@ -99,9 +99,7 @@ def check_requirements(requirements_file_path: str, post_text: str = "") -> None
         for name, (expected, actual) in mismatches.items():
             if actual is None:
                 errors.append(
-                    "Package {} is in {} but not in virtualenv".format(
-                        name, requirements_file_path
-                    )
+                    f"Package {name} is in {requirements_file_path} but not in virtualenv"
                 )
                 continue
 
