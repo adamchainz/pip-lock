@@ -2,6 +2,11 @@
 Changelog
 =========
 
+* Evaluate PEP 508 environment markers when parsing requirements, so a
+  requirement whose marker does not apply to the current environment (for
+  example ``colorama==0.4.6 ; sys_platform == 'win32'`` on Linux) no longer
+  produces a false-positive mismatch.
+
 * Drop Python 3.9 support.
 
 2.13.0 (2025-09-09)
