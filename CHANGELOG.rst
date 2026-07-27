@@ -6,6 +6,11 @@ Changelog
   This makes builds with uv about nine times faster, since uv runs the backend natively, without creating a build environment or spawning a Python process.
   Additionally, source distributions no longer include test files, which setuptools previously included incompletely, missing the files needed to actually run them.
 
+* Evaluate PEP 508 environment markers when parsing requirements, so a
+  requirement whose marker does not apply to the current environment (for
+  example ``colorama==0.4.6 ; sys_platform == 'win32'`` on Linux) no longer
+  produces a false-positive mismatch.
+
 * Drop Python 3.9 support.
 
 2.13.0 (2025-09-09)
