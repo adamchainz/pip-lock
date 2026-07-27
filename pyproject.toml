@@ -35,7 +35,9 @@ classifiers = [
   "Topic :: Utilities",
   "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+  "packaging",
+]
 urls = { Changelog = "https://github.com/adamchainz/pip-lock/blob/main/CHANGELOG.rst", Funding = "https://adamj.eu/books/", Repository = "https://github.com/adamchainz/pip-lock" }
 
 [dependency-groups]

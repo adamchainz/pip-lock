@@ -6,6 +6,8 @@ import sys
 from collections.abc import Iterable
 from importlib.metadata import distributions as get_distributions
 
+from packaging.markers import InvalidMarker, Marker
+
 
 def read_pip(filename: str) -> list[str]:
     """Return lines in pip file, concatenating included requirement files."""
@@ -38,7 +40,18 @@ def parse_pip(lines: Iterable[str]) -> dict[str, str]:
         if VCS_RE.match(line):
             continue
 
-        full_name, version_and_extras = line.split("==", 1)
+        # PEP 508 environment marker: skip requirements that don't apply to this environment
+        # (e.g. ``colorama==0.4.6 ; sys_platform == 'win32'`` on non-Windows).
+        requirement, _, marker = line.partition(";")
+        if marker.strip():
+            try:
+                if not Marker(marker).evaluate():
+                    continue
+            except InvalidMarker:
+                # Leave a malformed marker to pip; don't silently drop the requirement.
+                pass
+
+        full_name, version_and_extras = requirement.split("==", 1)
         # Strip extras and normalize
         name = normalize_name(full_name.split("[", 1)[0])
         version = version_and_extras.split(" ", 1)[0]
