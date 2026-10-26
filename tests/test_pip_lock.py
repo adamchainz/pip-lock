@@ -206,6 +206,60 @@ class TestGetMismatches:
 
         assert result == {}
 
+    def test_no_mismatches_trailing_zero(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==3.10\n")
+
+        with mock_get_distributions({"package": "3.10.0"}):
+            result = get_mismatches(str(requirements))
+
+        assert result == {}
+
+    def test_no_mismatches_prerelease_spelling(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==1.0alpha1\n")
+
+        with mock_get_distributions({"package": "1.0a1"}):
+            result = get_mismatches(str(requirements))
+
+        assert result == {}
+
+    def test_mismatch_differing_release(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==3.10\n")
+
+        with mock_get_distributions({"package": "3.10.1"}):
+            result = get_mismatches(str(requirements))
+
+        assert result == {"package": ("3.10", "3.10.1")}
+
+    def test_mismatch_differing_epoch(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==1!1.0\n")
+
+        with mock_get_distributions({"package": "1.0"}):
+            result = get_mismatches(str(requirements))
+
+        assert result == {"package": ("1!1.0", "1.0")}
+
+    def test_mismatch_non_pep440_versions(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==not-a-version\n")
+
+        with mock_get_distributions({"package": "also-not-a-version"}):
+            result = get_mismatches(str(requirements))
+
+        assert result == {"package": ("not-a-version", "also-not-a-version")}
+
+    def test_no_mismatches_identical_non_pep440_versions(self, tmp_path):
+        requirements = tmp_path / "requirements.txt"
+        requirements.write_text("package==not-a-version\n")
+
+        with mock_get_distributions({"package": "not-a-version"}):
+            result = get_mismatches(str(requirements))
+
+        assert result == {}
+
 
 class TestPrintErrors:
     def test_errors(self, capsys):
