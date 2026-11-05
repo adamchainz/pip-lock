@@ -6,6 +6,8 @@ import sys
 from collections.abc import Iterable
 from importlib.metadata import distributions as get_distributions
 
+from packaging.version import InvalidVersion, Version
+
 
 def read_pip(filename: str) -> list[str]:
     """Return lines in pip file, concatenating included requirement files."""
@@ -55,6 +57,18 @@ def normalize_name(name: str) -> str:
     return name.lower().replace("_", "-").replace(".", "-")
 
 
+def versions_equal(expected: str, installed: str) -> bool:
+    """Compare two version strings under PEP 440 equivalence."""
+    if expected == installed:
+        return True
+    try:
+        return bool(Version(expected) == Version(installed))
+    except InvalidVersion:
+        # Not PEP 440 versions, so exact string equality above was the only
+        # comparison available.
+        return False
+
+
 def get_mismatches(requirements_file_path: str) -> dict[str, tuple[str, str | None]]:
     """Return a dictionary of requirement mismatches."""
     pip_lines = read_pip(requirements_file_path)
@@ -66,7 +80,7 @@ def get_mismatches(requirements_file_path: str) -> dict[str, tuple[str, str | No
         installed_version = installed.get(name)
         if installed_version is None:
             mismatches[name] = (expected_version, None)
-        elif installed_version != expected_version:
+        elif not versions_equal(expected_version, installed_version):
             mismatches[name] = (expected_version, installed_version)
 
     return mismatches
