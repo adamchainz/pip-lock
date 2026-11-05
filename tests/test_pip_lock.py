@@ -104,6 +104,26 @@ class TestParsePip:
     def test_ignore_at_https_urls(self):
         assert parse_pip(["foo @ https://example.com"]) == {}
 
+    def test_marker_matching_environment_is_kept(self):
+        assert parse_pip(["package==1.0 ; python_version >= '3'"]) == {
+            "package": "1.0",
+        }
+
+    def test_marker_not_matching_environment_is_skipped(self):
+        assert parse_pip(["package==1.0 ; python_version < '3'"]) == {}
+
+    def test_marker_without_surrounding_spaces(self):
+        assert parse_pip(["package==1.0;python_version<'3'"]) == {}
+
+    def test_marker_with_extras(self):
+        assert parse_pip(["package[extra]==1.0 ; python_version < '3'"]) == {}
+
+    def test_invalid_marker_is_kept(self):
+        # A malformed marker is left for pip to report, not silently dropped.
+        assert parse_pip(["package==1.0 ; not a valid marker"]) == {
+            "package": "1.0",
+        }
+
 
 class TestGetInstalled:
     def test_single(self):
